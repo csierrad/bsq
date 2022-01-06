@@ -140,18 +140,19 @@ int check_square(int *coord, int size, int **obs_coord, int nobs)
 		}
 	}
 
-	
+
 	return (1);
 }
 
 int main()
 {
-	char src[] = "input.txt";
+	// Cuidado con el archivo
+	char src[] = "input1.txt";
 	int **obs_coord = read_map(src);
 	int nobs = number_obs(src);
-	int coord[] = {5, 0};
+	int coord[] = {0, 0};
 
-	printf("%d\n", check_square(coord, 8, obs_coord, nobs));
+	printf("%d\n", check_square(coord, 10, obs_coord, nobs));
 
 	return 0;
 }
