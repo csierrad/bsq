@@ -128,9 +128,33 @@ int **read_map(char src[])
 }
 
 
+//COMPROBAR SI ES NECESARIA ESTA FUNCION. NO DEBERÍA DARSE EL CASO EN EL QUE PASEMOS UN PUNTO QUE NO SE ENCUENTRE DENTRO DEL TABLERO
+//Comprueba si el punto de coordenadas coord está dentro del tablero
+int check_borders(char src[], int *coord)
+{
+	int fd = open(src, O_RDONLY);
+	int cols = get_cols(src);
+	int rows;
+	read(fd, &rows, 1);
+	rows = rows - '0';
+	close(fd);
+
+	printf("cols: %d\n", cols);
+	printf("rows: %d\n", rows);
+
+	if(coord[0] < cols && coord[1] < rows)
+	{
+		return(1);
+	}
+
+	return(0);
+}
+
+
+// Comprueba si el cuadrado de lado size interfiere con algún obstáculo. El parámetro coord son las coordenadas que se van a utilizar para colocar la esquina superior izquierda del cuadrado. Si el cuadrado cabe devuelve 1, de lo contrario 0.
 int check_square(int *coord, int size, int **obs_coord, int nobs)
 {
-	int i = 0;	
+	int i = 0;
 
 	for(i = 0; i < nobs; i++)
 	{
@@ -140,19 +164,21 @@ int check_square(int *coord, int size, int **obs_coord, int nobs)
 		}
 	}
 
-
 	return (1);
 }
+
 
 int main()
 {
 	// Cuidado con el archivo
-	char src[] = "input1.txt";
+	char src[] = "input.txt";
 	int **obs_coord = read_map(src);
 	int nobs = number_obs(src);
-	int coord[] = {0, 0};
+	int coord[] = {20, 8};
 
-	printf("%d\n", check_square(coord, 10, obs_coord, nobs));
+	//La función check_square no comprueba si el cuadrado que se genera se crea dentro o fuera del tablero
+	
+	printf("%d\n", check_square(coord, 4, obs_coord, nobs));
 
 	return 0;
 }
