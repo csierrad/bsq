@@ -5,6 +5,10 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+char src[] = "input.txt";
+
+//REVISAR TODAS LAS LLAMADAS A LAS FUNCIONES CON EL PARÁMETRO SRC 
+
 
 // Calcula el ancho del tablero
 int get_cols(char src[])
@@ -31,6 +35,7 @@ int get_cols(char src[])
 
 	return (i);
 }
+
 
 // Calcula el número de obstaculos que hay en el mapa
 int number_obs(char src[])
@@ -128,9 +133,8 @@ int **read_map(char src[])
 }
 
 
-//COMPROBAR SI ES NECESARIA ESTA FUNCION. NO DEBERÍA DARSE EL CASO EN EL QUE PASEMOS UN PUNTO QUE NO SE ENCUENTRE DENTRO DEL TABLERO
-//Comprueba si el punto de coordenadas coord está dentro del tablero
-int check_borders(char src[], int *coord)
+//Comprueba si el cuadrado que se genera en el punto con coordenadas coord y de tamaño size se genera por completo dentro del tablero (return 1) o si por el contrario parte de este sale por fuera (return 0)
+int check_borders(int *coord, int size)
 {
 	int fd = open(src, O_RDONLY);
 	int cols = get_cols(src);
@@ -139,10 +143,7 @@ int check_borders(char src[], int *coord)
 	rows = rows - '0';
 	close(fd);
 
-	printf("cols: %d\n", cols);
-	printf("rows: %d\n", rows);
-
-	if(coord[0] < cols && coord[1] < rows)
+	if((coord[0] + size) <= cols && (coord[1] + size) <= rows)
 	{
 		return(1);
 	}
@@ -163,6 +164,10 @@ int check_square(int *coord, int size, int **obs_coord, int nobs)
 			return (0);
 		}
 	}
+	if(!check_borders(coord, size))
+	{
+		return(0);
+	}
 
 	return (1);
 }
@@ -171,14 +176,36 @@ int check_square(int *coord, int size, int **obs_coord, int nobs)
 int main()
 {
 	// Cuidado con el archivo
-	char src[] = "input.txt";
 	int **obs_coord = read_map(src);
 	int nobs = number_obs(src);
-	int coord[] = {20, 8};
+	int coord[2];
+	int size = 1;
+	int max_size = 1;
+	int res_coord[2];
+	int i;
+	int j;
+	int rows;
+	int fd = open(src, O_RDONLY);
+	read(fd, &rows, 1);
+	rows = rows - '0';
+	close(fd);
 
-	//La función check_square no comprueba si el cuadrado que se genera se crea dentro o fuera del tablero
+	//printf("%d\n", check_square(coord, 5, obs_coord, nobs));
+
+	for(j = 0; j < rows; j++)
+	{
+		for(i = 0; i < get_cols(src); i++)
+		{
+			coord[0] = i;
+			coord[1] = j;
+			while(check_square(coord, size, obs_coord, nobs))
+			{
+				size++;
+			}
+			
+		}
+	}
 	
-	printf("%d\n", check_square(coord, 4, obs_coord, nobs));
 
 	return 0;
 }
