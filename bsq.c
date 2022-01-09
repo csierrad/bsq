@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-char src[] = "input1.txt";
+char src[] = "input.txt";
 
 typedef struct Board
 {
@@ -24,7 +24,7 @@ typedef struct Board
 int get_cols()
 {
 	char c;
-	int i = 0;
+	int i = 0, eof = 1;
 	int fd = open(src, O_RDONLY);
 
 	// Leer los primeros 6 caracteres para llegar al primero de la primera fila (No he encontrado otra manera mejor ¿¿¿¿read(fd, NULL, 5)??? <- Esto no funciona)
@@ -35,10 +35,10 @@ int get_cols()
 	read(fd, &c, 1);
 	read(fd, &c, 1);
 
-	while (c != 10)
+	while (c != 10 && eof)
 	{
 		i++;
-		read(fd, &c, 1);
+		eof = read(fd, &c, 1);
 	}
 
 	close(fd);
@@ -210,7 +210,6 @@ void print_board(int max_size, int *res_coord, board b)
 		}
 	}
 
-	write(1, "\n", 1);
 	close(fd);
 
 	return;
@@ -243,10 +242,10 @@ int main()
 				res_coord[0] = coord[0];
 				res_coord[1] = coord[1];
 			}
-			printf("[%d, %d] -> max_size: %d\n", i, j, max_size);
+			//printf("[%d, %d] -> max_size: %d\n", i, j, max_size);
 		}
 	}
-	printf("res: [%d, %d] -> max_size: %d\n", res_coord[0], res_coord[1], max_size);
+	//printf("res: [%d, %d] -> max_size: %d\n", res_coord[0], res_coord[1], max_size);
 
 	print_board(max_size, res_coord, b);
 
