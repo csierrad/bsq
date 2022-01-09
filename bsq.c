@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-char src[] = "input.txt";
+char src[] = "input1.txt";
 
 typedef struct Board
 {
@@ -141,7 +141,7 @@ int check_square(int coord[2], int size, board b)
 		if (b.obs_coord[i][0] >= coord[0] && b.obs_coord[i][1] >= coord[1] && b.obs_coord[i][0] < coord[0] + size && b.obs_coord[i][1] < coord[1] + size)
 		{
 			return (0);
-		}	
+		}
 	}
 	if (!check_borders(coord, size, b))
 		return (0);
@@ -164,6 +164,56 @@ void initialize_board(board *b)
 	b->cols = get_cols();
 	b->nobs = number_obs();
 	b->obs_coord = read_map();
+}
+
+void print_board(int max_size, int *res_coord, board b)
+{
+	int i = -1, j = 0, k = 0, aux = 0, eof = 1;
+	char c;
+	int fd = open(src, O_RDONLY);
+
+	read(fd, &c, 1);
+	read(fd, &c, 1);
+	read(fd, &c, 1);
+	read(fd, &c, 1);
+	read(fd, &c, 1);
+
+	while (eof)
+	{
+		eof = read(fd, &c, 1);
+		i++;
+
+		if (c == 10)
+		{
+			i = -1;
+			j++;
+		}
+		if (eof)
+		{
+			if (res_coord[0] == i && (res_coord[1] + aux) == j && aux < max_size)
+			{
+				k = 0;
+				while (k < max_size - 1 && aux < max_size)
+				{
+					write(1, &b.full, 1);
+					eof = read(fd, &c, 1);
+					k++;
+					i++;
+				}
+				write(1, &b.full, 1);
+				aux++;
+			}
+			else
+			{
+				write(1, &c, 1);
+			}
+		}
+	}
+
+	write(1, "\n", 1);
+	close(fd);
+
+	return;
 }
 
 int main()
@@ -197,6 +247,8 @@ int main()
 		}
 	}
 	printf("res: [%d, %d] -> max_size: %d\n", res_coord[0], res_coord[1], max_size);
+
+	print_board(max_size, res_coord, b);
 
 	return 0;
 }
