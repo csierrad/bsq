@@ -5,7 +5,7 @@
 #include <unistd.h>
 
 
-char src[] = "input.txt";
+//char src[] = "input.txt";
 
 // Comprueba que en la primera fila hay un número (asumo que el número solamente puede ser de 1 cifra ya que si colocasemos como carácter vacío un número no habría forma de distinguir cual es el número y cual el carácter) al que le siguen 3 carácteres imprimibles y después un salto de línea
 int first_line(char *src)
@@ -118,10 +118,18 @@ int check_length(char *src)
 	return (1);
 }
 
-int main()
+
+/* int main()
 {
 	
-	printf("%d\n", check_length(src)); 
+	int (*check_functions[3])(char *);
+
+	check_functions[0] = first_line;
+	check_functions[1] = diff_char;
+	check_functions[2] = check_length;
+
+
+	printf("%d\n", check_functions[2](src)); 
 
 	return (0);
-}
+} */

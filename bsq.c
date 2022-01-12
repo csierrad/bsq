@@ -4,8 +4,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include "valid_map.c"
 
-char src[] = "input.txt";
+//char src[] = "input.txt";
 
 typedef struct Board
 {
@@ -18,10 +19,10 @@ typedef struct Board
 	char obs;
 	int nobs;
 	int **obs_coord;
-} board;
+} board_t;
 
 // Calcula el ancho del tablero
-int get_cols()
+int get_cols(char *src)
 {
 	char c;
 	int i = 0, eof = 1;
@@ -47,7 +48,7 @@ int get_cols()
 }
 
 // Calcula el número de obstaculos que hay en el mapa
-int number_obs()
+int number_obs(char *src)
 {
 	int i = 0, eof = 1;
 	char c, obs;
@@ -76,7 +77,7 @@ int number_obs()
 }
 
 // Devuelve un array de la forma array[n][2] con las coordenadas x e y de cada obstaculos
-int **read_map()
+int **read_map(char *src)
 {
 	int aux, i = 0, j = 0, k = 0, eof = 1;
 	char obs, c;
@@ -121,7 +122,7 @@ int **read_map()
 }
 
 // Comprueba si el cuadrado que se genera en el punto con coordenadas coord y de tamaño size se genera por completo dentro del tablero (return 1) o si por el contrario parte de este sale por fuera (return 0)
-int check_borders(int coord[2], int size, board b)
+int check_borders(int coord[2], int size, board_t b)
 {
 	if ((coord[0] + size) <= b.cols && (coord[1] + size) <= b.rows)
 	{
@@ -132,7 +133,7 @@ int check_borders(int coord[2], int size, board b)
 }
 
 // Comprueba si el cuadrado de lado size interfiere con algún obstáculo. El parámetro coord son las coordenadas que se van a utilizar para colocar la esquina superior izquierda del cuadrado. Si el cuadrado cabe devuelve 1, de lo contrario 0.
-int check_square(int coord[2], int size, board b)
+int check_square(int coord[2], int size, board_t b)
 {
 	int i = 0;
 
@@ -149,7 +150,7 @@ int check_square(int coord[2], int size, board b)
 	return (1);
 }
 
-void initialize_board(board *b)
+void initialize_board(board_t *b, char *src)
 {
 	char c;
 	int fd = open(src, O_RDONLY);
@@ -161,12 +162,12 @@ void initialize_board(board *b)
 	close(fd);
 
 	b->rows = c - '0';
-	b->cols = get_cols();
-	b->nobs = number_obs();
-	b->obs_coord = read_map();
+	b->cols = get_cols(src);
+	b->nobs = number_obs(src);
+	b->obs_coord = read_map(src);
 }
 
-void print_board(int max_size, int *res_coord, board b)
+void print_board(int max_size, int *res_coord, board_t b, char *src)
 {
 	int i = -1, j = 0, k = 0, aux = 0, eof = 1;
 	char c;
@@ -215,39 +216,73 @@ void print_board(int max_size, int *res_coord, board b)
 	return;
 }
 
-int main()
+int check_map(char *src)
 {
-	board b;
-	int i, j, size = 1, max_size = 0;
+	int i = 0;
+	int (*check_functions[3])(char *);
+
+	check_functions[0] = first_line;
+	check_functions[1] = diff_char;
+	check_functions[2] = check_length;
+
+	for (i = 0; i < 3; i++)
+	{
+		if (!check_functions[i](src))
+		{
+			return (0);
+		}
+	}
+	return (1);
+}
+
+int main(int argc, char *argv[])
+{
+	board_t b;
+	int i, j, aux = 1, size = 1, max_size = 0;
 	int coord[2];
 	int res_coord[2] = {-1, -1};
 
-	initialize_board(&b);
-
-	for (j = 0; j < b.rows; j++)
+	while (aux < argc)
 	{
-		for (i = 0; i < b.cols; i++)
+		if (!check_map(argv[aux]))
 		{
-			size = max_size;
-			coord[0] = i;
-			coord[1] = j;
-			while (check_square(coord, size, b))
-			{
-				size++;
-			}
-
-			if ((size - 1) > max_size)
-			{
-				max_size = size - 1;
-				res_coord[0] = coord[0];
-				res_coord[1] = coord[1];
-			}
-			//printf("[%d, %d] -> max_size: %d\n", i, j, max_size);
+			write(1, "map error\n", 10);
 		}
+		else
+		{
+			initialize_board(&b, argv[aux]);
+
+			for (j = 0; j < b.rows; j++)
+			{
+				for (i = 0; i < b.cols; i++)
+				{
+					size = max_size;
+					coord[0] = i;
+					coord[1] = j;
+					while (check_square(coord, size, b))
+					{
+						size++;
+					}
+
+					if ((size - 1) > max_size)
+					{
+						max_size = size - 1;
+						res_coord[0] = coord[0];
+						res_coord[1] = coord[1];
+					}
+					// printf("[%d, %d] -> max_size: %d\n", i, j, max_size);
+				}
+			}
+			// printf("res: [%d, %d] -> max_size: %d\n", res_coord[0], res_coord[1], max_size);
+
+			print_board(max_size, res_coord, b, argv[aux]);
+		}
+
+		// Esta útlima condición hace que no se escriba el salto de línea después del último tablero
+		if(aux < argc - 1)
+			write(1, "\n", 1);
+		aux++;
 	}
-	//printf("res: [%d, %d] -> max_size: %d\n", res_coord[0], res_coord[1], max_size);
 
-	print_board(max_size, res_coord, b);
-
-	return 0;
+	return (0);
 }
