@@ -1,11 +1,6 @@
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
 
+#include "functions.h"
 
-//char src[] = "input.txt";
 
 // Comprueba que en la primera fila hay un número (asumo que el número solamente puede ser de 1 cifra ya que si colocasemos como carácter vacío un número no habría forma de distinguir cual es el número y cual el carácter) al que le siguen 3 carácteres imprimibles y después un salto de línea
 int first_line(char *src)
@@ -40,6 +35,7 @@ int first_line(char *src)
 	return (0);
 }
 
+
 // Comprueba que los carácteres de la primera fila son distintos entre si
 int diff_char(char *src)
 {
@@ -61,6 +57,7 @@ int diff_char(char *src)
 }
 
 
+//Comprueba que todoas las líneas del tablero tienen la misma longitud y al mismo tiempo comprueba que cada carácter del tablero es alguno de los indicados en la cabecera, que el número de líneas coincide con el número proporcionado al principio y que hay al menos un carácter en el tablero.
 int check_length(char *src)
 {
 	char characters[2];
@@ -74,7 +71,7 @@ int check_length(char *src)
 	read(fd, &characters[1], 1);
 	read(fd, &c, 1);
 	read(fd, &c, 1);
-	read(fd, &c, 1);	 //Leemos primer caracter del tablero
+	read(fd, &c, 1);
 
 	while(eof)
 	{
@@ -119,17 +116,22 @@ int check_length(char *src)
 }
 
 
-/* int main()
+// Define un array con las funciones anteriores y las comprueba una a una con el objetivo de ver si se trata de un mapa valido o no.
+int check_map(char *src)
 {
-	
+	int i = 0;
 	int (*check_functions[3])(char *);
 
 	check_functions[0] = first_line;
 	check_functions[1] = diff_char;
 	check_functions[2] = check_length;
 
-
-	printf("%d\n", check_functions[2](src)); 
-
-	return (0);
-} */
+	for (i = 0; i < 3; i++)
+	{
+		if (!check_functions[i](src))
+		{
+			return (0);
+		}
+	}
+	return (1);
+}
