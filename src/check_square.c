@@ -1,4 +1,4 @@
-#include "functions.h"
+#include "header.h"
 
 
 // Comprueba si el cuadrado que se genera en el punto con coordenadas coord y de tamaño size se genera por completo dentro del tablero (return 1) o si por el contrario parte de este sale por fuera (return 0)

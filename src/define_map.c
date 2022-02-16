@@ -1,4 +1,4 @@
-#include "functions.h"
+#include "header.h"
 
 
 // Calcula el ancho del tablero

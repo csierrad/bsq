@@ -1,5 +1,5 @@
-#ifndef FUNCTIONS_H
-#define FUNCTIONS_H
+#ifndef HEADER_H
+#define HEADER_H
 
 #include <stdio.h>
 #include <sys/types.h>

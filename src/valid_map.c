@@ -1,5 +1,5 @@
 
-#include "functions.h"
+#include "header.h"
 
 
 // Comprueba que en la primera fila hay un número (asumo que el número solamente puede ser de 1 cifra ya que si colocasemos como carácter vacío un número no habría forma de distinguir cual es el número y cual el carácter) al que le siguen 3 carácteres imprimibles y después un salto de línea
