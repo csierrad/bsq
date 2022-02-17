@@ -1,6 +1,6 @@
 # BSQ 
 
-BSQ proyect from 42 Madrid pool
+BSQ project from 42 Madrid pool
 
 [Original statement](./extra/subject_bsq.en.pdf)
 
