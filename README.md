@@ -1,12 +1,12 @@
 # BSQ 
 
-BSQ project from 42 Madrid pool
+BSQ project from [42 Madrid](https://www.42madrid.com/) pool.
 
 [Original statement](./extra/subject_bsq.en.pdf)
 
 ## What is this for?
 
-Given a number n of boards passed as arguments in which there are empty and obstacle characters, the program gets the biggest square possible that can fit at the board avoiding all obstacles. If there’s more than 1 possible square, the program chooses the one on the top left.
+Given a number n of boards passed as arguments in which there are empty and obstacle characters, the program has to get the biggest square possible that  fits on the board avoiding all obstacles. If there’s more than 1 possible square, the program chooses the one on the top left.
 
 For example, given the next board:
 
@@ -44,8 +44,8 @@ The board has a first line with the following elements:
 
 - The number of rows of the board
 - The empty character
-- The full character
 - The obstacle character
+- The full character
 
 After this first line is the board itself.
 
